@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package osion.proto;
+
+message Bool {
+    bool val = 1;
+}
+
+message Int {
+    int32 val = 1;
+}
+
+message Double {
+    double val = 1;
+}
+
+message String {
+    string val = 1;
+}
