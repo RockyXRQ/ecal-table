@@ -6,58 +6,114 @@ from ecal.core.subscriber import ProtoSubscriber
 from google.protobuf.message import Message
 
 
-class Entry:
-    def __init__(self, key: str, msg_clazz: typing.Type[Message]):
-        self.key = key
-        self.msg_clazz = msg_clazz
-
-        self.pub: ProtoPublisher = None
-        self.sub: ProtoSubscriber = None
-
-    def _lazy_init_pub(self):
-        if self.pub is None:
-            self.pub = ProtoPublisher(self.key, self.msg_clazz)
-
-    def _lazy_init_sub(self):
-        if self.sub is None:
-            self.sub = ProtoSubscriber(self.key, self.msg_clazz)
-
-    def set_msg(self, msg: Message):
-        self._lazy_init_pub()
-        self.pub.send(msg)
-
-    def get_msg(self, default: Message) -> (Message, float):
-        self._lazy_init_sub()
-        ret, msg, timestamp = self.sub.receive()
-        return msg if ret > 0 else default, timestamp
-
-    def set_val(self, val: typing.Any):
-        self._lazy_init_pub()
-        self.pub.send(self.msg_clazz(val=val))
-
-    def get_val(self, default: typing.Any) -> (typing.Any, float):
-        self._lazy_init_sub()
-        ret, msg, timestamp = self.sub.receive()
-        return msg.val if ret > 0 else default, timestamp
-
-    def set_callback(self, callback: typing.Callable[[str, Message, float], None]):
-        self._lazy_init_sub()
-        self.sub.set_callback(callback)
-
-    def rm_callback(self, callback: typing.Callable[[str, Message, float], None]):
-        self.sub.rem_callback(callback)
-
-
 class Table:
+    """
+    Manages Entry objects with unique keys and message classes. Ensures eCAL is initialized
+    """
+
+    class Entry:
+        """
+        Manages a publisher and subscriber for a specific key and message class
+        """
+
+        def __init__(self, key: str, msg_clazz: typing.Type[Message]) -> None:
+            """
+            :param key: unique entry identifier
+            :param msg_clazz: protobuf message class type
+            """
+            self.key: str = key
+            self.msg_clazz: typing.Type[Message] = msg_clazz
+            self.pub: ProtoPublisher | None = None
+            self.sub: ProtoSubscriber | None = None
+
+        def _lazy_init_pub(self) -> None:
+            """Initializes the publisher if needed"""
+            if self.pub is None:
+                self.pub = ProtoPublisher(self.key, self.msg_clazz)
+
+        def _lazy_init_sub(self) -> None:
+            """Initializes the subscriber if needed"""
+            if self.sub is None:
+                self.sub = ProtoSubscriber(self.key, self.msg_clazz)
+
+        def set_msg(self, msg: Message) -> None:
+            """
+            Sends a Protobuf message
+            :param msg: protobuf message to send
+            """
+            self._lazy_init_pub()
+            self.pub.send(msg)
+
+        def get_msg(self, default: Message) -> (Message, float):
+            """
+            Receives a Protobuf message
+            :param default: default protobuf message if none received
+            :return: protobuf message and timestamp
+            """
+            self._lazy_init_sub()
+            ret, msg, timestamp = self.sub.receive()
+            return msg if ret > 0 else default, timestamp
+
+        def set_val(self, val: typing.Any) -> None:
+            """
+            Sends a value by creating a Protobuf message instance
+            :param val: value to send
+            """
+            self._lazy_init_pub()
+            self.pub.send(self.msg_clazz(val=val))
+
+        def get_val(self, default: typing.Any) -> (typing.Any, float):
+            """
+            Receives a value
+            :param default: default value if none received
+            :return: value and timestamp
+            """
+            self._lazy_init_sub()
+            ret, msg, timestamp = self.sub.receive()
+            return msg.val if ret > 0 else default, timestamp
+
+        def set_callback(
+            self, callback: typing.Callable[[str, Message, float], None]
+        ) -> None:
+            """
+            Sets a callback function that will be triggered when receiving Protobuf messages
+            :param callback: Function to be called when a message is received. The callback takes:
+                            - topic name (str)
+                            - received Protobuf message (Message)
+                            - timestamp (float)
+            """
+            self._lazy_init_sub()
+            self.sub.set_callback(callback)
+
+        def rm_callback(
+            self, callback: typing.Callable[[str, Message, float], None]
+        ) -> None:
+            """
+            Removes a previously set callback
+            :param callback: function to remove
+            """
+            self.sub.rem_callback(callback)
+
     _has_ecal_init: bool = False
     _entries: dict[str, Entry] = {}
 
     def __init__(self, argv: list[str], name: str):
+        """
+        Initializes the Table and eCAL
+        :param argv: command-line arguments for eCAL initialization
+        :param name: name for the eCAL process
+        """
         if not self._has_ecal_init:
             self._has_ecal_init = True
             ecal_core.initialize(argv, name)
 
     def entry(self, key: str, msg_clazz: typing.Type[Message]) -> Entry:
+        """
+        Retrieves or creates an Entry
+        :param key: unique identifier for the entry
+        :param msg_clazz: protobuf message class type
+        :return: the Entry object
+        """
         if key not in self._entries:
-            self._entries[key] = Entry(key, msg_clazz)
+            self._entries[key] = self.Entry(key, msg_clazz)
         return self._entries[key]
