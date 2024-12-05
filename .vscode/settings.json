@@ -29,6 +29,7 @@
         "onnxruntime",
         "osion",
         "postprocess",
+        "protoc",
         "roborio",
         "rvecs",
         "SOLVEPNP",

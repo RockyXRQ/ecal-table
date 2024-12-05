@@ -5,27 +5,50 @@ from ecal.core.publisher import ProtoPublisher
 from ecal.core.subscriber import ProtoSubscriber
 from google.protobuf.message import Message
 
-from proto import basic_pb2, capture_pb2
-
 
 class Entry:
-    def __init__(self, key: str, clazz: typing.Type[Message]):
-        self.pub = ProtoPublisher(key, clazz)
-        self.sub = ProtoSubscriber(key, clazz)
+    def __init__(self, key: str, msg_clazz: typing.Type[Message]):
+        self.key = key
+        self.msg_clazz = msg_clazz
 
-    def send(self, val: typing.Any, timestamp: float = -1):
-        self.pub.send(val, timestamp)
+        self.pub: ProtoPublisher = None
+        self.sub: ProtoSubscriber = None
 
-    def recv(self) -> (bool, typing.Any, float):
-        return self.sub.receive()
+    def _lazy_init_pub(self):
+        if self.pub is None:
+            self.pub = ProtoPublisher(self.key, self.msg_clazz)
 
-    def set_recv_callback(
-        self, callback: typing.Callable[[str, typing.Any, float], None]
-    ):
+    def _lazy_init_sub(self):
+        if self.sub is None:
+            self.sub = ProtoSubscriber(self.key, self.msg_clazz)
+
+    def set_msg(self, msg: Message):
+        self._lazy_init_pub()
+        self.pub.send(msg)
+
+    def get_msg(self, default: Message) -> (Message, float):
+        self._lazy_init_sub()
+        ret, msg, timestamp = self.sub.receive()
+        return msg if ret > 0 else default, timestamp
+
+    def set_val(self, val: typing.Any):
+        self._lazy_init_pub()
+        self.pub.send(self.msg_clazz(val=val))
+
+    def get_val(self, default: typing.Any) -> (typing.Any, float):
+        self._lazy_init_sub()
+        ret, msg, timestamp = self.sub.receive()
+        return msg.val if ret > 0 else default, timestamp
+
+    def set_callback(self, callback: typing.Callable[[str, Message, float], None]):
+        self._lazy_init_sub()
         self.sub.set_callback(callback)
 
+    def rm_callback(self, callback: typing.Callable[[str, Message, float], None]):
+        self.sub.rem_callback(callback)
 
-class Instance:
+
+class Table:
     _has_ecal_init: bool = False
     _entries: dict[str, Entry] = {}
 
@@ -34,71 +57,7 @@ class Instance:
             self._has_ecal_init = True
             ecal_core.initialize(argv, name)
 
-    def _create_entry(self, key: str, clazz: typing.Any):
+    def entry(self, key: str, msg_clazz: typing.Type[Message]) -> Entry:
         if key not in self._entries:
-            self._entries[key] = Entry(key, clazz)
-
-    def _set_basic(
-        self,
-        key: str,
-        val: int | float | str | bool,
-        clazz: typing.Type[
-            basic_pb2.Int | basic_pb2.Double | basic_pb2.String | basic_pb2.Bool
-        ],
-    ):
-        self._create_entry(key, clazz)
-        msg = clazz(val=val)
-        self._entries[key].send(msg)
-
-    def _get_basic(
-        self,
-        key: str,
-        default: int | float | str | bool,
-        clazz: typing.Type[
-            basic_pb2.Int | basic_pb2.Double | basic_pb2.String | basic_pb2.Bool
-        ],
-    ) -> (int | float | str | bool, float):
-        self._create_entry(key, clazz)
-        ret, msg, timestamp = self._entries[key].recv()
-        return msg.val if ret > 0 else default, timestamp
-
-    def set_int(self, key: str, val: int):
-        self._set_basic(key, val, basic_pb2.Int)
-
-    def get_int(self, key: str, default: int = 0) -> (int, float):
-        return self._get_basic(key, default, basic_pb2.Int)
-
-    def set_double(self, key: str, val: float):
-        self._set_basic(key, val, basic_pb2.Double)
-
-    def get_double(self, key: str, default: float = 0.0) -> (float, float):
-        return self._get_basic(key, default, basic_pb2.Double)
-
-    def set_str(self, key: str, val: str):
-        self._set_basic(key, val, basic_pb2.String)
-
-    def get_str(self, key: str, default: str = "") -> (str, float):
-        return self._get_basic(key, default, basic_pb2.String)
-
-    def set_bool(self, key: str, val: bool):
-        self._set_basic(key, val, basic_pb2.Bool)
-
-    def get_bool(self, key: str, default: bool = False) -> (bool, float):
-        return self._get_basic(key, default, basic_pb2.Bool)
-
-    def _set_msg(self, key: str, msg: Message, clazz: typing.Type[Message]):
-        self._create_entry(key, clazz)
-        self._entries[key].send(msg)
-
-    def _get_msg(self, key: str, default: Message, clazz: typing.Type[Message]):
-        self._create_entry(key, clazz)
-        ret, msg, timestamp = self._entries[key].recv()
-        return msg if ret > 0 else default, timestamp
-
-    def set_resolution(self, key: str, msg: capture_pb2.Resolution):
-        self._set_msg(key, msg, capture_pb2.Resolution)
-
-    def get_resolution(
-        self, key: str, default: capture_pb2.Resolution
-    ) -> (capture_pb2.Resolution, float):
-        return self._get_msg(key, default, capture_pb2.Resolution)
+            self._entries[key] = Entry(key, msg_clazz)
+        return self._entries[key]

@@ -2,19 +2,19 @@ import sys
 import time
 
 import core
-from proto import capture_pb2
+import proto
 
 if __name__ == "__main__":
-    instance = core.Instance(sys.argv, "rec")
+    table = core.Table(sys.argv, "rec")
 
     while True:
         print("************Received************")
-        print(f"int: {instance.get_int('test_int')}")
-        print(f"double: {instance.get_double('test_double')}")
-        print(f"str: {instance.get_str('test_str')}")
-        print(f"bool: {instance.get_bool('test_bool')}")
+        print(f"int: {table.entry('test_int', proto.Int).get_val(0)}")
+        print(f"double: {table.entry('test_double', proto.Double).get_val(0)}")
+        print(f"str: {table.entry('test_str', proto.Str).get_val('')}")
+        print(f"bool: {table.entry('test_bool', proto.Bool).get_val(False)}")
         print(
-            f"resolution: {instance.get_resolution('test_resolution', capture_pb2.Resolution(width=111, height=0, fps=0))}"
+            f"resolution: {table.entry('test_resolution', proto.Resolution).get_msg(proto.Resolution(width=111, height=0, fps=0))}"
         )
         print("****************************")
         print("")

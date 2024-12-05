@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0b\x62\x61sic.proto\x12\x0bosion.proto\"\x13\n\x04\x42ool\x12\x0b\n\x03val\x18\x01 \x01(\x08\"\x12\n\x03Int\x12\x0b\n\x03val\x18\x01 \x01(\x05\"\x15\n\x06\x44ouble\x12\x0b\n\x03val\x18\x01 \x01(\x01\"\x15\n\x06String\x12\x0b\n\x03val\x18\x01 \x01(\tb\x06proto3'
+  serialized_pb=b'\n\x0b\x62\x61sic.proto\x12\x0bosion.proto\"\x13\n\x04\x42ool\x12\x0b\n\x03val\x18\x01 \x01(\x08\"\x12\n\x03Int\x12\x0b\n\x03val\x18\x01 \x01(\x05\"\x15\n\x06\x44ouble\x12\x0b\n\x03val\x18\x01 \x01(\x01\"\x12\n\x03Str\x12\x0b\n\x03val\x18\x01 \x01(\tb\x06proto3'
 )
 
 
@@ -121,16 +121,16 @@ _DOUBLE = _descriptor.Descriptor(
 )
 
 
-_STRING = _descriptor.Descriptor(
-  name='String',
-  full_name='osion.proto.String',
+_STR = _descriptor.Descriptor(
+  name='Str',
+  full_name='osion.proto.Str',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='val', full_name='osion.proto.String.val', index=0,
+      name='val', full_name='osion.proto.Str.val', index=0,
       number=1, type=9, cpp_type=9, label=1,
       has_default_value=False, default_value=b"".decode('utf-8'),
       message_type=None, enum_type=None, containing_type=None,
@@ -149,13 +149,13 @@ _STRING = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=92,
-  serialized_end=113,
+  serialized_end=110,
 )
 
 DESCRIPTOR.message_types_by_name['Bool'] = _BOOL
 DESCRIPTOR.message_types_by_name['Int'] = _INT
 DESCRIPTOR.message_types_by_name['Double'] = _DOUBLE
-DESCRIPTOR.message_types_by_name['String'] = _STRING
+DESCRIPTOR.message_types_by_name['Str'] = _STR
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 Bool = _reflection.GeneratedProtocolMessageType('Bool', (_message.Message,), {
@@ -179,12 +179,12 @@ Double = _reflection.GeneratedProtocolMessageType('Double', (_message.Message,),
   })
 _sym_db.RegisterMessage(Double)
 
-String = _reflection.GeneratedProtocolMessageType('String', (_message.Message,), {
-  'DESCRIPTOR' : _STRING,
+Str = _reflection.GeneratedProtocolMessageType('Str', (_message.Message,), {
+  'DESCRIPTOR' : _STR,
   '__module__' : 'basic_pb2'
-  # @@protoc_insertion_point(class_scope:osion.proto.String)
+  # @@protoc_insertion_point(class_scope:osion.proto.Str)
   })
-_sym_db.RegisterMessage(String)
+_sym_db.RegisterMessage(Str)
 
 
 # @@protoc_insertion_point(module_scope)
