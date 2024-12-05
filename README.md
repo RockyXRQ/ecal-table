@@ -15,13 +15,13 @@ table = core.Table(sys.argv, "demo")
 # Basic types (Bool/Int/Double/Str) with single 'val' field
 # Use get_val/set_val
 table.entry("my_int", proto.Int).set_val(42)
-val = table.entry("my_int", proto.Int).get_val(0)  # 0 is default value
+val = table.entry("my_int", proto.Int).get_val(default=0)
 
 # Complex types
 # Use get_msg/set_msg
 example_msg = proto.Example(val_1="hello", val_2=123)
 table.entry("my_msg", proto.Example).set_msg(example_msg)
-msg = table.entry("my_msg", proto.Example).get_msg(proto.Example())
+msg = table.entry("my_msg", proto.Example).get_msg(default=proto.Example())
 
 # Subscribe with callback
 table.entry("my_int", proto.Int).set_callback(lambda key, msg, time: print(f"Got: {msg.val}"))
