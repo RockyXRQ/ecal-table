@@ -86,19 +86,19 @@ class Instance:
     def get_bool(self, key: str, default: bool = False) -> (bool, float):
         return self._get_basic(key, default, basic_pb2.Bool)
 
-    def _set_proto(self, key: str, msg: Message, clazz: typing.Type[Message]):
+    def _set_msg(self, key: str, msg: Message, clazz: typing.Type[Message]):
         self._create_entry(key, clazz)
         self._entries[key].send(msg)
 
-    def _get_proto(self, key: str, default: Message, clazz: typing.Type[Message]):
+    def _get_msg(self, key: str, default: Message, clazz: typing.Type[Message]):
         self._create_entry(key, clazz)
         ret, msg, timestamp = self._entries[key].recv()
         return msg if ret > 0 else default, timestamp
 
     def set_resolution(self, key: str, msg: capture_pb2.Resolution):
-        self._set_proto(key, msg, capture_pb2.Resolution)
+        self._set_msg(key, msg, capture_pb2.Resolution)
 
     def get_resolution(
         self, key: str, default: capture_pb2.Resolution
     ) -> (capture_pb2.Resolution, float):
-        return self._get_proto(key, default, capture_pb2.Resolution)
+        return self._get_msg(key, default, capture_pb2.Resolution)
