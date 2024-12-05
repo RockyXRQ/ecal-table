@@ -10,7 +10,7 @@ if __name__ == "__main__":
     double_val = 2.0
     str_val = "Hello"
     bool_val = True
-    
+
     while True:
         instance.setInt("test_int", int_val)
         instance.setDouble("test_double", double_val)
@@ -24,7 +24,6 @@ if __name__ == "__main__":
         print(f"bool: {bool_val}")
         print("****************************")
         print("")
-
 
         int_val += 1
         double_val += 1.0

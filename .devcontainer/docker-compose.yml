@@ -1,5 +1,5 @@
 services:
-  ecaltable:
+  ecal-table:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile

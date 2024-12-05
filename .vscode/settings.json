@@ -45,7 +45,7 @@
             {
                 "match": ".py",
                 "isAsync": true,
-                "cmd": "ruff check ${file} --select I --fix"
+                "cmd": "ruff check ${file} --select I --fix | ruff format ${file}"
             },
             {
                 "match": ".proto",

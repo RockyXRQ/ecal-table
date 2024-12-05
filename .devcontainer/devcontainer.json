@@ -1,9 +1,9 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/python
 {
-    "name": "ecaltable",
+    "name": "ecal-table",
     "dockerComposeFile": "docker-compose.yml",
-    "service": "ecaltable",
+    "service": "ecal-table",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
     "customizations": {
         "vscode": {
@@ -13,7 +13,6 @@
                 "ms-python.python",
                 "oderwat.indent-rainbow",
                 "tal7aouy.rainbow-bracket",
-                "tooltitudeteam.tooltitude-pb",
                 "Gruntfuggly.todo-tree",
                 "2gua.rainbow-brackets",
                 "emeraldwalk.RunOnSave",
