@@ -23,28 +23,5 @@ RUN apt install -y git
 RUN apt install -y protobuf-compiler
 RUN pip3 install protobuf
 
-# numpy
-RUN pip3 install numpy==1.24.4
-
-# opencv
-RUN pip3 install opencv-contrib-python-headless
-
-# wpilib
-RUN pip3 install pyntcore
-RUN pip3 install robotpy-wpimath
-
-# onnxruntime (avoid update numpy to 2.x)
-RUN pip3 install onnxruntime --no-deps
-
-# aiohttp
-RUN pip3 install aiohttp
-
-# linuxpy
-RUN pip3 install linuxpy
-
 # ruff
 RUN pip3 install ruff
-
-# v4l
-RUN apt install -y v4l-utils
-RUN apt install -y libv4l-dev
