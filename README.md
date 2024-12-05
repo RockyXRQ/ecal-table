@@ -1,6 +1,6 @@
-# eCAL Table
+# [eCAL](https://eclipse-ecal.github.io/ecal/) Table
 
-A simple wrapper for eCAL pub/sub with protobuf messages.
+A simple wrapper for [eCAL](https://eclipse-ecal.github.io/ecal/) pub/sub with protobuf messages.
 
 ## Quick Start
 
