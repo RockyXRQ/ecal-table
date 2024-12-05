@@ -1,55 +1,13 @@
 {
-    "cSpell.words": [
-        "appsink",
-        "APRILTAG",
-        "apriltags",
-        "arange",
-        "Arducam",
-        "argmax",
-        "Aruco",
-        "astype",
-        "charuco",
-        "Clazz",
-        "coeff",
-        "ecal",
-        "frombuffer",
-        "gethostname",
-        "GSTREAMER",
-        "imdecode",
-        "imread",
-        "imshow",
-        "IPPE",
-        "jpegdec",
-        "KINGSEN",
-        "mjpeg",
-        "MJPG",
-        "networktable",
-        "ntcore",
-        "onnx",
-        "onnxruntime",
-        "osion",
-        "postprocess",
-        "protoc",
-        "roborio",
-        "rvecs",
-        "SOLVEPNP",
-        "SQPNP",
-        "Sunplus",
-        "tvecs",
-        "wpilib",
-        "wpimath",
-        "wpistruct",
-        "wpiutil"
-    ],
     "emeraldwalk.runonsave": {
         "commands": [
             {
-                "match": ".py",
+                "match": "\\.py$",
                 "isAsync": true,
                 "cmd": "ruff check ${file} --select I --fix | ruff format ${file}"
             },
             {
-                "match": ".proto",
+                "match": "\\.proto$",
                 "cmd": "bash proto/gen.sh"
             }
         ]
