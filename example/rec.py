@@ -1,3 +1,11 @@
+"""
+Example receiver that polls for messages every second:
+- Basic types (Int/Double/Str/Bool) using get_val() with defaults
+- Complex type (Example) using get_msg() with default message
+
+This demonstrates the polling approach to receiving messages.
+"""
+
 import sys
 import time
 
