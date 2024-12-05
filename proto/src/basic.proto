@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package osion.proto;
+package et.proto;
 
 message Bool {
     bool val = 1;

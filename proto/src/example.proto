@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package et.proto;
+
+message Example {
+    string val_1 = 1;
+    int32 val_2 = 2;
+}
