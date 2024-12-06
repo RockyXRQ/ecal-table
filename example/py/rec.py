@@ -17,12 +17,12 @@ if __name__ == "__main__":
 
     try:
         while table.ok():
-            print(f"int: {table.entry('test_int', proto.Int).get_val(0)}")
-            print(f"double: {table.entry('test_double', proto.Double).get_val(0)}")
-            print(f"str: {table.entry('test_str', proto.Str).get_val('')}")
-            print(f"bool: {table.entry('test_bool', proto.Bool).get_val(False)}")
+            print(f"int: {table.entry(proto.Int, 'test_int').get_val(0)}")
+            print(f"double: {table.entry(proto.Double, 'test_double').get_val(0)}")
+            print(f"str: {table.entry(proto.Str, 'test_str').get_val('')}")
+            print(f"bool: {table.entry(proto.Bool, 'test_bool').get_val(False)}")
             print(
-                f"example: {table.entry('test_msg', proto.Example).get_msg(proto.Example(val_1='xixixi', val_2=12321))}"
+                f"example: {table.entry(proto.Example, 'test_msg').get_msg(proto.Example(val_1='xixixi', val_2=12321))}"
             )
             print("")
 

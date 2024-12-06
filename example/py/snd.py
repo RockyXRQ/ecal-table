@@ -25,11 +25,11 @@ if __name__ == "__main__":
     try:
         while table.ok():
             # Publish all messages
-            table.entry("test_int", proto.Int).set_val(int_val)
-            table.entry("test_double", proto.Double).set_val(double_val)
-            table.entry("test_str", proto.Str).set_val(str_val)
-            table.entry("test_bool", proto.Bool).set_val(bool_val)
-            table.entry("test_msg", proto.Example).set_msg(example_msg)
+            table.entry(proto.Int, "test_int").set_val(int_val)
+            table.entry(proto.Double, "test_double").set_val(double_val)
+            table.entry(proto.Str, "test_str").set_val(str_val)
+            table.entry(proto.Bool, "test_bool").set_val(bool_val)
+            table.entry(proto.Example, "test_msg").set_msg(example_msg)
 
             # Print current values
             print(f"int: {int_val}")

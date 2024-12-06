@@ -114,7 +114,7 @@ class Table:
         """
         return ecal_core.ok()
 
-    def entry(self, key: str, msg_class: typing.Type[Message]) -> Entry:
+    def entry(self, msg_class: typing.Type[Message], key: str) -> Entry:
         """
         Retrieves or creates an Entry
         :param key: unique identifier for the entry
