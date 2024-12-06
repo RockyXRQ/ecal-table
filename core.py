@@ -16,25 +16,25 @@ class Table:
         Manages a publisher and subscriber for a specific key and message class
         """
 
-        def __init__(self, key: str, msg_clazz: typing.Type[Message]) -> None:
+        def __init__(self, key: str, msg_class: typing.Type[Message]) -> None:
             """
             :param key: unique entry identifier
-            :param msg_clazz: protobuf message class type
+            :param msg_class: protobuf message class type
             """
             self.key: str = key
-            self.msg_clazz: typing.Type[Message] = msg_clazz
+            self.msg_class: typing.Type[Message] = msg_class
             self.pub: ProtoPublisher | None = None
             self.sub: ProtoSubscriber | None = None
 
         def _lazy_init_pub(self) -> None:
             """Initializes the publisher if needed"""
             if self.pub is None:
-                self.pub = ProtoPublisher(self.key, self.msg_clazz)
+                self.pub = ProtoPublisher(self.key, self.msg_class)
 
         def _lazy_init_sub(self) -> None:
             """Initializes the subscriber if needed"""
             if self.sub is None:
-                self.sub = ProtoSubscriber(self.key, self.msg_clazz)
+                self.sub = ProtoSubscriber(self.key, self.msg_class)
 
         def set_msg(self, msg: Message) -> None:
             """
@@ -60,7 +60,7 @@ class Table:
             :param val: value to send
             """
             self._lazy_init_pub()
-            self.pub.send(self.msg_clazz(val=val))
+            self.pub.send(self.msg_class(val=val))
 
         def get_val(self, default: typing.Any) -> (typing.Any, float):
             """
@@ -107,13 +107,13 @@ class Table:
             self._has_ecal_init = True
             ecal_core.initialize(argv, name)
 
-    def entry(self, key: str, msg_clazz: typing.Type[Message]) -> Entry:
+    def entry(self, key: str, msg_class: typing.Type[Message]) -> Entry:
         """
         Retrieves or creates an Entry
         :param key: unique identifier for the entry
-        :param msg_clazz: protobuf message class type
+        :param msg_class: protobuf message class type
         :return: the Entry object
         """
         if key not in self._entries:
-            self._entries[key] = self.Entry(key, msg_clazz)
+            self._entries[key] = self.Entry(key, msg_class)
         return self._entries[key]
