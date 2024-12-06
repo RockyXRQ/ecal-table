@@ -1,13 +1,15 @@
-find proto/ -name "*.py" -type f -delete
+CURRENT_DIR=$(pwd)
 
-protoc --proto_path=proto/src --python_out=proto proto/src/*.proto
+rm -rf proto/py proto/cpp
+mkdir -p proto/py proto/cpp
 
-generate_init_py() {
-    init_file="proto/__init__.py"
-    for file in proto/src/*.proto; do
-        filename=$(basename "$file" .proto)
-        echo "from .${filename}_pb2 import *" >> "$init_file"
-    done
-}
+protoc --proto_path=proto/src \
+    --python_out=${CURRENT_DIR}/proto/py \
+    --cpp_out=${CURRENT_DIR}/proto/cpp \
+    proto/src/*.proto
 
-generate_init_py
+init_file="proto/__init__.py"
+for file in proto/src/*.proto; do
+    filename=$(basename "$file" .proto)
+    echo "from .py.${filename}_pb2 import *" >> "$init_file"
+done

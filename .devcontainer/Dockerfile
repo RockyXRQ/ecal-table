@@ -15,6 +15,7 @@ RUN add-apt-repository -y ppa:ecal/ecal-5.13
 RUN apt update
 RUN apt install -y ecal
 RUN apt install -y python3-ecal5
+RUN apt install -y cmake g++ libprotobuf-dev
 
 # git
 RUN apt install -y git

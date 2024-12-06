@@ -11,5 +11,10 @@
                 "cmd": "bash proto/gen.sh"
             }
         ]
+    },
+    "files.associations": {
+        "limits": "cpp",
+        "string": "cpp",
+        "*.inc": "cpp"
     }
 }
