@@ -107,6 +107,13 @@ class Table:
             self._has_ecal_init = True
             ecal_core.initialize(argv, name)
 
+    def ok(self) -> bool:
+        """
+        eCAL process state
+        :return: eCAL process state
+        """
+        return ecal_core.ok()
+
     def entry(self, key: str, msg_class: typing.Type[Message]) -> Entry:
         """
         Retrieves or creates an Entry

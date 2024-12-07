@@ -23,7 +23,7 @@ if __name__ == "__main__":
     example_msg = proto.Example(val_1="LALALA", val_2=32123)
 
     try:
-        while True:
+        while table.ok():
             # Publish all messages
             table.entry("test_int", proto.Int).set_val(int_val)
             table.entry("test_double", proto.Double).set_val(double_val)
