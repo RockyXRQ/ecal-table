@@ -124,3 +124,9 @@ class Table:
         if key not in self._entries:
             self._entries[key] = self.Entry(key, msg_class)
         return self._entries[key]
+
+    def finalize(self) -> None:
+        """
+        Finalizes the Table and eCAL
+        """
+        ecal_core.finalize()
