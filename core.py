@@ -96,6 +96,7 @@ class Table:
 
     _has_ecal_init: bool = False
     _entries: dict[str, Entry] = {}
+    _inst_count: int = 0
 
     def __init__(self, argv: list[str], name: str):
         """
@@ -106,6 +107,7 @@ class Table:
         if not self._has_ecal_init:
             self._has_ecal_init = True
             ecal_core.initialize(argv, name)
+        self._inst_count += 1
 
     def ok(self) -> bool:
         """
@@ -129,4 +131,12 @@ class Table:
         """
         Finalizes the Table and eCAL
         """
-        ecal_core.finalize()
+        self._inst_count -= 1
+        if self._inst_count == 0:
+            ecal_core.finalize()
+
+    def __enter__(self) -> "Table":
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        self.finalize()
