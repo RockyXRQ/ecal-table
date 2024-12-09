@@ -1,49 +1,61 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
+#include <ecal/ecal.h>
+#include <ecal/msg/protobuf/publisher.h>
+#include <ecal/msg/protobuf/subscriber.h>
 
-#include "core.h"
 #include "proto/cpp/basic.pb.h"
 #include "proto/cpp/example.pb.h"
 
 int main(int argc, char **argv)
 {
-    et::Table table(argc, argv, "rec");
+    eCAL::Initialize(argc, argv, "rec");
 
-    try
+    auto intSub = eCAL::protobuf::CSubscriber<et::proto::Int>("test_int");
+    auto doubleSub = eCAL::protobuf::CSubscriber<et::proto::Double>("test_double");
+    auto strSub = eCAL::protobuf::CSubscriber<et::proto::Str>("test_str");
+    auto boolSub = eCAL::protobuf::CSubscriber<et::proto::Bool>("test_bool");
+    auto exampleSub = eCAL::protobuf::CSubscriber<et::proto::Example>("test_msg");
+
+    auto intMsg = et::proto::Int();
+    auto doubleMsg = et::proto::Double();
+    auto strMsg = et::proto::Str();
+    auto boolMsg = et::proto::Bool();
+    auto exampleMsg = et::proto::Example();
+
+    while (eCAL::Ok())
     {
-        while (table.ok())
-        {
-            et::proto::Int default_int;
-            default_int.set_val(0);
-            std::cout << "int: " << table.entry<et::proto::Int>("test_int").get(default_int).DebugString() << std::endl;
+        et::proto::Int default_int;
+        default_int.set_val(0);
+        intSub.Receive(intMsg);
+        std::cout << "int: " << intMsg.DebugString() << std::endl;
 
-            et::proto::Double default_double;
-            default_double.set_val(0.0);
-            std::cout << "double: " << table.entry<et::proto::Double>("test_double").get(default_double).DebugString() << std::endl;
+        et::proto::Double default_double;
+        default_double.set_val(0.0);
+        doubleSub.Receive(doubleMsg);
+        std::cout << "double: " << doubleMsg.DebugString() << std::endl;
 
-            et::proto::Str default_str;
-            default_str.set_val("");
-            std::cout << "str: " << table.entry<et::proto::Str>("test_str").get(default_str).DebugString() << std::endl;
+        et::proto::Str default_str;
+        default_str.set_val("");
+        strSub.Receive(strMsg);
+        std::cout << "str: " << strMsg.DebugString() << std::endl;
 
-            et::proto::Bool default_bool;
-            default_bool.set_val(false);
-            std::cout << "bool: " << table.entry<et::proto::Bool>("test_bool").get(default_bool).DebugString() << std::endl;
+        et::proto::Bool default_bool;
+        default_bool.set_val(false);
+        boolSub.Receive(boolMsg);
+        std::cout << "bool: " << boolMsg.DebugString() << std::endl;
 
-            et::proto::Example default_example;
-            default_example.set_val_1("xixixi");
-            default_example.set_val_2(12321);
-            std::cout << "example: " << table.entry<et::proto::Example>("test_msg").get(default_example).DebugString() << std::endl;
-            std::cout << std::endl;
+        et::proto::Example default_example;
+        default_example.set_val_1("xixixi");
+        default_example.set_val_2(12321);
+        exampleSub.Receive(exampleMsg);
+        std::cout << "example: " << exampleMsg.DebugString() << std::endl;
 
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
-    catch (const std::exception &e)
-    {
-        std::cerr << "Error: " << e.what() << std::endl;
-        return 1;
-    }
+
+    eCAL::Finalize();
 
     return 0;
 }

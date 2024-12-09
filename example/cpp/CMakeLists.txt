@@ -1,13 +1,12 @@
 cmake_minimum_required(VERSION 3.10)
 project(ecal_table_examples)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(eCAL REQUIRED)
 find_package(Protobuf REQUIRED)
 
-# 添加 protobuf 生成的源文件
 add_library(proto_lib
     ${CMAKE_SOURCE_DIR}/../../proto/cpp/basic.pb.cc
     ${CMAKE_SOURCE_DIR}/../../proto/cpp/example.pb.cc
