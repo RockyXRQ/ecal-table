@@ -1,6 +1,6 @@
 CURRENT_DIR=$(pwd)
 
-rm -rf proto/py proto/cpp
+rm -rf proto/py proto/cpp proto/__init__.py
 mkdir -p proto/py proto/cpp
 
 protoc --proto_path=proto/src \
