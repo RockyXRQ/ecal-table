@@ -32,14 +32,14 @@ table.entry("my_int", proto.Int).set_callback(lambda key, msg, time: print(f"Got
 Run sender:
 
 ```shell
-python3 -m example.snd
+python3 -m example.py.snd
 ```
 
 Run receiver (choose one):
 
 ```shell
-python3 -m example.rec      # polling
-python3 -m example.rec_cb   # callback
+python3 -m example.py.rec      # polling
+python3 -m example.py.rec_cb   # callback
 ```
 
 ## Development
