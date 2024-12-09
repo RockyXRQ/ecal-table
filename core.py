@@ -98,16 +98,18 @@ class Table:
     _entries: dict[str, Entry] = {}
     _inst_count: int = 0
 
-    def __init__(self, argv: list[str], name: str):
+    def __init__(self, argv: list[str], name: str, root: str = ""):
         """
         Initializes the Table and eCAL
         :param argv: command-line arguments for eCAL initialization
         :param name: name for the eCAL process
+        :param root: root for the entry keys
         """
         if not self._has_ecal_init:
             self._has_ecal_init = True
             ecal_core.initialize(argv, name)
         self._inst_count += 1
+        self._root = root
 
     def ok(self) -> bool:
         """
@@ -119,13 +121,14 @@ class Table:
     def entry(self, msg_class: typing.Type[Message], key: str) -> Entry:
         """
         Retrieves or creates an Entry
-        :param key: unique identifier for the entry
         :param msg_class: protobuf message class type
+        :param key: unique identifier for the entry
         :return: the Entry object
         """
-        if key not in self._entries:
-            self._entries[key] = self.Entry(key, msg_class)
-        return self._entries[key]
+        full_key = f"{self._root.replace('/', '')}/{key}"
+        if full_key not in self._entries:
+            self._entries[full_key] = self.Entry(full_key, msg_class)
+        return self._entries[full_key]
 
     def finalize(self) -> None:
         """
