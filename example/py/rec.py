@@ -13,12 +13,12 @@ import core
 import proto
 
 if __name__ == "__main__":
-    core.init(sys.argv, "rec_process")
+    core.init(sys.argv, "rec")
 
-    table = core.Table("rec")
+    table = core.Table()
 
     try:
-        while table.ok():
+        while core.ok():
             print(f"int: {table.entry(proto.Int, 'test_int').get_val(0)}")
             print(f"double: {table.entry(proto.Double, 'test_double').get_val(0)}")
             print(f"str: {table.entry(proto.Str, 'test_str').get_val('')}")
@@ -31,4 +31,4 @@ if __name__ == "__main__":
             time.sleep(1)
     except KeyboardInterrupt:
         print("Stopping...")
-        table.finalize()
+        core.finalize()

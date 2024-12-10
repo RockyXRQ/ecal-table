@@ -13,9 +13,9 @@ import core
 import proto
 
 if __name__ == "__main__":
-    core.init(sys.argv, "snd_process")
+    core.init(sys.argv, "snd")
 
-    table = core.Table("snd")
+    table = core.Table()
 
     # Initialize values
     int_val = 1
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     example_msg = proto.Example(val_1="LALALA", val_2=32123)
 
     try:
-        while table.ok():
+        while core.ok():
             # Publish all messages
             table.entry(proto.Int, "test_int").set_val(int_val)
             table.entry(proto.Double, "test_double").set_val(double_val)
@@ -50,4 +50,4 @@ if __name__ == "__main__":
             time.sleep(1)
     except KeyboardInterrupt:
         print("Stopping...")
-        table.finalize()
+        core.finalize()

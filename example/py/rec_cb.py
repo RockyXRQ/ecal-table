@@ -14,9 +14,9 @@ import core
 import proto
 
 if __name__ == "__main__":
-    core.init(sys.argv, "rec_cb_process")
+    core.init(sys.argv, "rec_cb")
 
-    table = core.Table("rec_cb")
+    table = core.Table()
 
     # Set up callbacks for all message types
     table.entry(proto.Int, "test_int").set_callback(
@@ -37,8 +37,8 @@ if __name__ == "__main__":
 
     try:
         # Keep program running to receive callbacks
-        while True:
+        while core.ok():
             time.sleep(1)
     except KeyboardInterrupt:
         print("Stopping...")
-        table.finalize()
+        core.finalize()
