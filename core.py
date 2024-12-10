@@ -55,7 +55,7 @@ _ping_clients: dict[str, _PingClient] = {}
 _pong_servers: dict[str, _PongServer] = {}
 
 
-def init(argv: list[str], process_name: str):
+def init(argv: list[str], process_name: str) -> None:
     """
     Initializes eCAL runtime and pong server
     :param argv: command line arguments
@@ -77,7 +77,7 @@ def ok() -> bool:
     return ecal_core.ok()
 
 
-def finalize():
+def finalize() -> None:
     """
     Performs eCAL cleanup and resource deallocation
     """
@@ -88,7 +88,7 @@ def finalize():
     ecal_core.finalize()
 
 
-def ping(process_name: str):
+def ping(process_name: str) -> None:
     """
     Initiates a ping request
     :param process_name: target process name
@@ -199,7 +199,7 @@ class Table:
 
     _entries: dict[str, Entry] = {}
 
-    def __init__(self, root: str = ""):
+    def __init__(self, root: str = "") -> None:
         """
         Initializes the Table and eCAL
         :param root: root for the entry keys
