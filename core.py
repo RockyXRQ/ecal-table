@@ -25,7 +25,7 @@ class _PingClient:
             self.has_pong = False
 
     def ping(self) -> None:
-        self.client.call_method("ping", b"ping")
+        self.client.call_method("ping", b"")
 
     def destroy(self) -> None:
         self.client.destroy()
@@ -44,7 +44,7 @@ class _PongServer:
         )
 
     def _callback(self, method_name, req_type, resp_type, request) -> None:
-        return 0, bytes("pong", "ascii")
+        return 0, b""
 
     def destroy(self) -> None:
         self.server.destroy()
