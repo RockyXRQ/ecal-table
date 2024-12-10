@@ -8,6 +8,10 @@ from google.protobuf.message import Message
 
 
 class _PingClient:
+    """
+    Handles outgoing ping requests for eCAL process monitoring
+    """
+
     def __init__(self, process_name: str) -> None:
         self.name: str = process_name
         self.has_pong: bool = False
@@ -28,6 +32,10 @@ class _PingClient:
 
 
 class _PongServer:
+    """
+    Provides ping-pong service response for process health checks
+    """
+
     def __init__(self, process_name: str) -> None:
         self.name: str = process_name
         self.server: ecal_service.Server = ecal_service.Server(process_name)
@@ -48,6 +56,11 @@ _pong_servers: dict[str, _PongServer] = {}
 
 
 def init(argv: list[str], process_name: str):
+    """
+    Initializes eCAL runtime and pong server
+    :param argv: command line arguments
+    :param process_name: process name for identification
+    """
     global _has_ecal_init
     if not _has_ecal_init:
         ecal_core.initialize(argv, process_name)
@@ -56,29 +69,49 @@ def init(argv: list[str], process_name: str):
         _pong_servers[process_name] = _PongServer(process_name)
 
 
-def ping(process_name: str) -> bool:
+def ok() -> bool:
+    """
+    eCAL runtime state
+    :return: eCAL runtime state
+    """
+    return ecal_core.ok()
+
+
+def finalize():
+    """
+    Performs eCAL cleanup and resource deallocation
+    """
+    for server in _pong_servers.values():
+        server.destroy()
+    for client in _ping_clients.values():
+        client.destroy()
+    ecal_core.finalize()
+
+
+def ping(process_name: str):
+    """
+    Initiates a ping request
+    :param process_name: target process name
+    """
     if process_name not in _ping_clients:
         _ping_clients[process_name] = _PingClient(process_name)
     _ping_clients[process_name].ping()
 
 
 def has_pong(process_name: str) -> bool:
+    """
+    Verifies ping response status
+    :param process_name: target process name
+    :return: response status
+    """
     if process_name not in _ping_clients:
         return False
     return _ping_clients[process_name].has_pong
 
 
-def ok() -> bool:
-    """
-    eCAL process state
-    :return: eCAL process state
-    """
-    return ecal_core.ok()
-
-
 class Table:
     """
-    Manages Entry objects with unique keys and message classes. Ensures eCAL is initialized
+    Manages message routing through Entry objects
     """
 
     class Entry:
@@ -114,7 +147,7 @@ class Table:
             self._lazy_init_pub()
             self.pub.send(msg)
 
-        def get_msg(self, default: Message) -> (Message, float):
+        def get_msg(self, default: Message) -> tuple[Message, float]:
             """
             Receives a Protobuf message
             :param default: default protobuf message if none received
@@ -132,7 +165,7 @@ class Table:
             self._lazy_init_pub()
             self.pub.send(self.msg_class(val=val))
 
-        def get_val(self, default: typing.Any) -> (typing.Any, float):
+        def get_val(self, default: typing.Any) -> tuple[typing.Any, float]:
             """
             Receives a value
             :param default: default value if none received
@@ -184,11 +217,3 @@ class Table:
         if full_key not in self._entries:
             self._entries[full_key] = self.Entry(full_key, msg_class)
         return self._entries[full_key]
-
-
-def finalize():
-    for server in _pong_servers.values():
-        server.destroy()
-    for client in _ping_clients.values():
-        client.destroy()
-    ecal_core.finalize()
