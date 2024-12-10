@@ -1,52 +1,78 @@
-# [eCAL](https://eclipse-ecal.github.io/ecal/) Table
+# eCAL Table
 
-A simple wrapper for [eCAL](https://eclipse-ecal.github.io/ecal/) pub/sub with protobuf messages.
+Lightweight wrapper for [eCAL](https://eclipse-ecal.github.io/ecal/) pub/sub with Protocol Buffers integration.
 
-## Quick Start
+## Usage
 
 ```python
 import sys
+
 import core
 import proto
 
-# Initialize table with sys.argv
-table = core.Table(sys.argv, "demo")
+# Initialize eCAL runtime
+core.init(sys.argv, "demo")
+table = core.Table()
 
-# Basic types (Bool/Int/Double/Str) with single 'val' field
-# Use get_val/set_val
-table.entry("my_int", proto.Int).set_val(42)
-val = table.entry("my_int", proto.Int).get_val(default=0)
+# Basic types with single value field
+entry = table.entry(proto.Int, "counter")
+entry.set_val(42)
+value = entry.get_val(default=0)
 
-# Complex types
-# Use get_msg/set_msg
-example_msg = proto.Example(val_1="hello", val_2=123)
-table.entry("my_msg", proto.Example).set_msg(example_msg)
-msg = table.entry("my_msg", proto.Example).get_msg(default=proto.Example())
+# Custom message types
+msg = proto.Example(val_1="hello", val_2=123)
+entry = table.entry(proto.Example, "status")
+entry.set_msg(msg)
+received = entry.get_msg(default=proto.Example())
 
-# Subscribe with callback
-table.entry("my_int", proto.Int).set_callback(lambda key, msg, time: print(f"Got: {msg.val}"))
+# Callback-based subscription
+entry.set_callback(lambda topic, msg, time: print(f"Received: {msg.val}"))
+
+# Process monitoring
+core.ping("target_process")
+is_alive = core.has_pong("target_process")
 ```
 
 ## Examples
 
-Run sender:
+### Python
 
-```shell
-python3 -m example.py.snd
+Run pub/sub:
+```bash
+python3 -m example.py.snd            # sender
+python3 -m example.py.rec            # polling
+python3 -m example.py.rec_cb         # callback
 ```
 
-Run receiver (choose one):
+Run process monitoring:
+```bash
+python3 -m example.py.server         # pong server
+python3 -m example.py.client         # ping client
+```
 
-```shell
-python3 -m example.py.rec      # polling
-python3 -m example.py.rec_cb   # callback
+### C++
+
+Build:
+```bash
+cd example/cpp
+mkdir build && cd build
+cmake ..
+make
+```
+
+Run examples:
+```bash
+./snd       # sender
+./rec       # polling
+./rec_cb    # callback
 ```
 
 ## Development
 
-Proto files are automatically compiled to Python when saved. The workflow:
+Proto files are automatically compiled when saved(by VSCode `Run on Save` extension):
 
 1. Edit `.proto` files in `proto/src/`
 2. Save triggers:
-   - Generate `*_pb2.py` files
+   - Generate Python `*_pb2.py` files in `proto/py/`
+   - Generate C++ `.pb.h` and `.pb.cc` files in `proto/cpp/`
    - Update `proto/__init__.py`
