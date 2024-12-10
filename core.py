@@ -1,15 +1,74 @@
 import typing
 
 from ecal.core import core as ecal_core
+from ecal.core import service as ecal_service
 from ecal.core.publisher import ProtoPublisher
 from ecal.core.subscriber import ProtoSubscriber
 from google.protobuf.message import Message
+
+_has_ecal_init: bool = False
+
+
+def init(argv: list[str], name: str):
+    global _has_ecal_init
+    if not _has_ecal_init:
+        ecal_core.initialize(argv, name)
+        _has_ecal_init = True
+
+
+class _PingClient:
+    def __init__(self, name: str) -> None:
+        self.name: str = name
+        self.has_pong: bool = False
+        self.client: ecal_service.Client = ecal_service.Client(name)
+        self.client.add_response_callback(self._callback)
+
+    def _callback(self, service_info, response) -> None:
+        if service_info["call_state"] == "call_state_executed":
+            self.has_pong = True
+        else:
+            self.has_pong = False
+
+    def ping(self) -> None:
+        self.client.call_method("ping", b"ping")
+
+    def destroy(self) -> None:
+        self.client.destroy()
+
+
+_ping_clients: dict[str, _PingClient] = {}
+
+
+def ping(name: str) -> bool:
+    if name not in _ping_clients:
+        _ping_clients[name] = _PingClient(name)
+    _ping_clients[name].ping()
+
+
+def has_pong(name: str) -> bool:
+    if name not in _ping_clients:
+        return False
+    return _ping_clients[name].has_pong
 
 
 class Table:
     """
     Manages Entry objects with unique keys and message classes. Ensures eCAL is initialized
     """
+
+    class _PongServer:
+        def __init__(self, name: str) -> None:
+            self.name: str = name
+            self.server: ecal_service.Server = ecal_service.Server(name)
+            self.server.add_method_callback(
+                "ping", "ping_type", "pong_type", self._callback
+            )
+
+        def _callback(self, method_name, req_type, resp_type, request) -> None:
+            return 0, bytes("pong", "ascii")
+
+        def destroy(self) -> None:
+            self.server.destroy()
 
     class Entry:
         """
@@ -94,20 +153,19 @@ class Table:
             """
             self.sub.rem_callback(callback)
 
-    _has_ecal_init: bool = False
     _entries: dict[str, Entry] = {}
+    _pong_server: dict[str, _PongServer] = {}
     _inst_count: int = 0
 
-    def __init__(self, argv: list[str], name: str, root: str = ""):
+    def __init__(self, name: str, root: str = ""):
         """
         Initializes the Table and eCAL
-        :param argv: command-line arguments for eCAL initialization
         :param name: name for the eCAL process
         :param root: root for the entry keys
         """
-        if not self._has_ecal_init:
-            self._has_ecal_init = True
-            ecal_core.initialize(argv, name)
+        self._name = name
+        if self._name not in self._pong_server:
+            self._pong_server[self._name] = self._PongServer(self._name)
         self._inst_count += 1
         self._root = root
 
@@ -134,12 +192,10 @@ class Table:
         """
         Finalizes the Table and eCAL
         """
+        if self._name in self._pong_server:
+            self._pong_server[self._name].destroy()
+            del self._pong_server[self._name]
+
         self._inst_count -= 1
         if self._inst_count == 0:
             ecal_core.finalize()
-
-    def __enter__(self) -> "Table":
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
-        self.finalize()

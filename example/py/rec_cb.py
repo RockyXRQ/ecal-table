@@ -14,7 +14,9 @@ import core
 import proto
 
 if __name__ == "__main__":
-    table = core.Table(sys.argv, "rec_cb")
+    core.init(sys.argv, "rec_cb_process")
+
+    table = core.Table("rec_cb")
 
     # Set up callbacks for all message types
     table.entry(proto.Int, "test_int").set_callback(

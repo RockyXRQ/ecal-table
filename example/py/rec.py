@@ -13,7 +13,9 @@ import core
 import proto
 
 if __name__ == "__main__":
-    table = core.Table(sys.argv, "rec")
+    core.init(sys.argv, "rec_process")
+
+    table = core.Table("rec")
 
     try:
         while table.ok():

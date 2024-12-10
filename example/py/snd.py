@@ -13,7 +13,9 @@ import core
 import proto
 
 if __name__ == "__main__":
-    table = core.Table(sys.argv, "snd")
+    core.init(sys.argv, "snd_process")
+
+    table = core.Table("snd")
 
     # Initialize values
     int_val = 1
