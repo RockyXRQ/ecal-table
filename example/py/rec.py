@@ -15,6 +15,11 @@ import proto
 if __name__ == "__main__":
     core.init(sys.argv, "rec")
 
+    while not core.has_pong("snd"):
+        print("Waiting for snd process init...")
+        core.ping("snd")
+        time.sleep(1)
+
     table = core.Table()
 
     try:
