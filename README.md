@@ -1,6 +1,6 @@
 # ezCAL
 
-Lightweight wrapper for [eCAL](https://eclipse-ecal.github.io/ecal/) pub/sub with Protocol Buffers integration.
+Lightweight wrapper for [eCAL](https://eclipse-ecal.github.io/ecal/) pub/sub and process monitoring.
 
 ## Usage
 
