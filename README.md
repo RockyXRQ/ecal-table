@@ -1,4 +1,4 @@
-# eCAL Table
+# ezCAL
 
 Lightweight wrapper for [eCAL](https://eclipse-ecal.github.io/ecal/) pub/sub with Protocol Buffers integration.
 
