@@ -213,7 +213,7 @@ class Table:
         :param key: unique identifier for the entry
         :return: the Entry object
         """
-        full_key = f"{self._root.replace('/', '')}/{key}"
+        full_key = f"{self._root.strip('/')}/{key}"
         if full_key not in self._entries:
             self._entries[full_key] = self.Entry(full_key, msg_class)
         return self._entries[full_key]
